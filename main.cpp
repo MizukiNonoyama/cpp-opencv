@@ -227,7 +227,32 @@ int main(int argc, char **argv) {
     }
 
     // ソーベルフィルタ
+    cv::Mat sobel = src.clone();
+    {
+        for (int i = 1; i < grayScale.rows - 1; i++) {
+            for (int j = 1; j < grayScale.cols - 1; j++) {
+                const int gray_1_1 = grayScale.at<cv::Vec3b>(i - 1, j - 1)[0];
+                const int gray0_1 = grayScale.at<cv::Vec3b>(i, j - 1)[0];
+                const int gray1_1 = grayScale.at<cv::Vec3b>(i + 1, j - 1)[0];
+                const int gray_10 = grayScale.at<cv::Vec3b>(i - 1, j)[0];
+                const int gray00 = grayScale.at<cv::Vec3b>(i, j)[0];
+                const int gray10 = grayScale.at<cv::Vec3b>(i + 1, j)[0];
+                const int gray_11 = grayScale.at<cv::Vec3b>(i - 1, j + 1)[0];
+                const int gray01 = grayScale.at<cv::Vec3b>(i, j + 1)[0];
+                const int gray11 = grayScale.at<cv::Vec3b>(i + 1, j + 1)[0];
+                int newGrayVertical = -1 * gray_1_1 - 2 * gray_10 - 1 * gray_11 + 1 * gray1_1 + 2 * gray10 + 1 * gray11;
+                int newGrayHorizontal = -1 * gray_1_1 - 2 * gray0_1 - 1 * gray1_1 + 1 * gray_11 + 2 * gray01 + 1 * gray11;
+                int grad = static_cast<int>(std::sqrt(newGrayVertical * newGrayVertical + newGrayHorizontal * newGrayHorizontal));
 
+                cv::Vec3b newPixel;
+                newPixel[0] = grad;
+                newPixel[1] = grad;
+                newPixel[2] = grad;
+                sobel.at<cv::Vec3b>(i, j) = newPixel;
+            }
+        }
+        outputImage(sobel, "./output/sobel.jpg");
+    }
 
     cv::Mat aloeBlending = aloeL.clone();
     {
