@@ -226,6 +226,7 @@ int main(int argc, char **argv) {
         errorCode += outputImage(histgramAloeL, "./output/histogramAloeL.jpg");
     }
 
+    // ソーベルフィルタ
 
 
     cv::Mat aloeBlending = aloeL.clone();
