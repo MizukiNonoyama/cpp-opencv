@@ -28,6 +28,28 @@ namespace {
         return img;
     }
 
+    // Reads a video file and decodes it into a sequence of per-frame images,
+    // mirroring parseImage but for video sources. VideoCapture reuses the
+    // same internal buffer across reads, so each frame is cloned before
+    // being stored.
+    std::vector<cv::Mat> parseVideoFrames(const fs::path &path) {
+        cv::VideoCapture cap(path.string());
+        if (!cap.isOpened()) {
+            throw std::runtime_error("Failed to open '" + path.string() + "'");
+        }
+
+        std::vector<cv::Mat> frames;
+        cv::Mat frame;
+        while (cap.read(frame)) {
+            frames.push_back(frame.clone());
+        }
+
+        if (frames.empty()) {
+            throw std::runtime_error("Failed to parse video data from '" + path.string() + "'");
+        }
+        return frames;
+    }
+
     // Reverses parseImage: re-encodes pixel data back into a file format's
     // byte representation (e.g. JPEG). ext is a file extension like ".jpg".
     std::vector<uchar> restoreImage(const cv::Mat &img, const std::string &ext) {
@@ -96,6 +118,17 @@ int main(int argc, char **argv) {
     }
     fmt::print("Loaded '{}' ({}x{})\n", inputPathAloeR.string(), aloeR.cols, aloeR.rows);
     // 以上 claude code による
+
+    const fs::path inputPathRoboCup = "./robo_cup_incheon.mp4";
+    std::vector<cv::Mat> roboCupFrames;
+    try {
+        roboCupFrames = parseVideoFrames(inputPathRoboCup);
+    } catch (const std::exception &e) {
+        fmt::print(fg(fmt::color::red), "{}\n", e.what());
+        return 1;
+    }
+    fmt::print("Loaded '{}' ({} frames, {}x{})\n", inputPathRoboCup.string(), roboCupFrames.size(),
+               roboCupFrames.front().cols, roboCupFrames.front().rows);
 
     int errorCode = 0;
     errorCode += outputImage(src, "./output/raw.jpg");
@@ -291,6 +324,17 @@ int main(int argc, char **argv) {
         }
         errorCode += outputImage(aloeBlending3D, "./output/blending3D.jpg");
     }
+
+    // https://www.kkaneko.jp/ai/opencv/opencvpython.html
+    cv::Mat firstFrame = roboCupFrames[0];
+    cv::Mat copied = firstFrame.clone();
+    cv::Mat gray, edge, dilate, mask;
+    outputImage(copied, "./output/copied.jpg");
+    cv::cvtColor(copied, gray, cv::COLOR_BGR2GRAY);
+    cv::Canny(gray, edge, 50, 150);
+    outputImage(edge, "./output/edge.jpg");
+    cv::inRange(copied, cv::Scalar(100, 100, 100), cv::Scalar(250, 250, 250), mask);
+    outputImage(mask, "./output/mask.jpg");
 
     return errorCode;
 }
