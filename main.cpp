@@ -328,13 +328,22 @@ int main(int argc, char **argv) {
     // https://www.kkaneko.jp/ai/opencv/opencvpython.html
     cv::Mat firstFrame = roboCupFrames[0];
     cv::Mat copied = firstFrame.clone();
-    cv::Mat gray, edge, dilate, mask;
+    cv::Mat gray, edge, dilate, mask, masked, line, corner, dst_norm, dst_norm_scaled;
+    mask = cv::Mat::zeros(firstFrame.rows, firstFrame.cols, CV_8UC1);
     outputImage(copied, "./output/copied.jpg");
     cv::cvtColor(copied, gray, cv::COLOR_BGR2GRAY);
     cv::Canny(gray, edge, 50, 150);
     outputImage(edge, "./output/edge.jpg");
-    cv::inRange(copied, cv::Scalar(100, 100, 100), cv::Scalar(250, 250, 250), mask);
-    outputImage(mask, "./output/mask.jpg");
+    cv::Point points[4];
+    points[0] = cv::Point(firstFrame.cols * 3 / 10, firstFrame.rows * 3 / 40);
+    points[1] = cv::Point(firstFrame.cols * 13 / 20, firstFrame.rows * 3 / 40);
+    points[2] = cv::Point(firstFrame.cols * 19 / 20, firstFrame.rows * 28 / 30);
+    points[3] = cv::Point(firstFrame.cols * 1 / 20, firstFrame.rows * 28 / 30);
+    cv::fillConvexPoly(mask, points, 4, cv::Scalar(255, 255, 255));
+    gray.copyTo(masked, mask);
+    cv::inRange(masked, cv::Scalar(100, 100, 100), cv::Scalar(250, 250, 250), line);
+
+    outputImage(line, "./output/line.jpg");
 
     return errorCode;
 }
