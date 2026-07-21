@@ -179,13 +179,15 @@ int main(int argc, char **argv) {
             }
         }
 
-        int N = 8;
+        int N = 1;
+        int integral2 = 0;
         for (int i = 0; i < 256 / N; i++) {
             int histgramOutput = 0;
             for (int j = 0; j < N; j++) {
                 histgramOutput += histgram[i * N + j];
             }
-            fmt::print(fg(fmt::color::cyan), "{}\n", histgramOutput);
+            integral2 += histgramOutput;
+            fmt::print(fg(fmt::color::cyan), "{}\n", integral2);
         }
 
         std::vector<int> histgramInt(256, 0);
@@ -200,7 +202,7 @@ int main(int argc, char **argv) {
             for (int j = 0; j < grayScale.cols; j++) {
                 const cv::Vec3b pixel = grayScale.at<cv::Vec3b>(i, j);
                 int s = pixel[0];
-                int convert = static_cast<int>(256 * static_cast<double>(histgramInt[s]) / static_cast<double>(integral));
+                int convert = static_cast<int>(255 * static_cast<double>(histgramInt[s]) / static_cast<double>(integral));
                 histgram2[convert]++;
 
                 // output mat
@@ -213,14 +215,14 @@ int main(int argc, char **argv) {
         }
 
         fmt::print("\n");
-        int integral2 = 0;
+        integral2 = 0;
         for (int i = 0; i < 256 / N; i++) {
             int histgramOutput = 0;
             for (int j = 0; j < N; j++) {
-                integral2 += histgram2[i * N + j];
                 histgramOutput += histgram2[i * N + j];
             }
-            fmt::print(fg(fmt::color::cyan), "{}\n", histgramOutput);
+            integral2 += histgramOutput;
+            fmt::print(fg(fmt::color::cyan), "{}\n", integral2);
         }
 
         errorCode += outputImage(histogram, "./output/histogram.jpg");
@@ -254,9 +256,9 @@ int main(int argc, char **argv) {
         for (int i = 0; i < aloeL.rows; i++) {
             for (int j = 0; j < aloeL.cols; j++) {
                 const cv::Vec3b pixel = aloeL.at<cv::Vec3b>(i, j);
-                int convertB = static_cast<int>(256 * static_cast<double>(histgramIntB[pixel[0]]) / static_cast<double>(pixels));
-                int convertG = static_cast<int>(256 * static_cast<double>(histgramIntG[pixel[1]]) / static_cast<double>(pixels));
-                int convertR = static_cast<int>(256 * static_cast<double>(histgramIntR[pixel[2]]) / static_cast<double>(pixels));
+                int convertB = static_cast<int>(255 * static_cast<double>(histgramIntB[pixel[0]]) / static_cast<double>(pixels));
+                int convertG = static_cast<int>(255 * static_cast<double>(histgramIntG[pixel[1]]) / static_cast<double>(pixels));
+                int convertR = static_cast<int>(255 * static_cast<double>(histgramIntR[pixel[2]]) / static_cast<double>(pixels));
 
                 cv::Vec3b newPixel;
                 newPixel[0] = convertB;
