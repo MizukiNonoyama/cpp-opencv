@@ -415,7 +415,7 @@ int main(int argc, char **argv) {
         // https://amroamroamro.github.io/mexopencv/matlab/cv.solvePnP.html
         cv::Mat cameraMat = cv::Mat::zeros(3, 3, CV_64F);
         cv::Size imageSize = contoursIm.size();
-        cv::Point2f principalPoint(0.5 * imageSize.width, 0.5 * imageSize.height);
+        cv::Point2d principalPoint(0.5 * imageSize.width, 0.5 * imageSize.height);
         // FOVを80度で仮定
         constexpr double fovDegree = 80.0;
         // https://www.scratchapixel.com/lessons/3d-basic-rendering/3d-viewing-pinhole-camera/how-pinhole-camera-works-part-2.html
