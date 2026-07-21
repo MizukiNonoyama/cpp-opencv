@@ -1,6 +1,7 @@
 @echo off
 setlocal EnableDelayedExpansion
 
+rem START CLAUDE CODE
 rem ---------------------------------------------------------------------
 rem Resets the CMake cache/configuration for this project.
 rem   - Default: deletes CMakeCache.txt + CMakeFiles from each known
@@ -38,3 +39,5 @@ for %%D in (%DIRS%) do (
 
 echo [reset] Done.
 exit /b 0
+
+rem END CLAUDE CODE

@@ -1,6 +1,7 @@
 @echo off
 setlocal EnableDelayedExpansion
 
+rem START CLAUDE CODE
 rem ---------------------------------------------------------------------
 rem Reproduces, as a script, everything done interactively to set up and
 rem verify this project:
@@ -128,3 +129,5 @@ for /f "delims=" %%V in ('python --version 2^>nul') do (
     echo %%V | findstr /b /r "Python [0-9]" >nul && set "PYTHON_OK=1"
 )
 exit /b 0
+
+rem END CLAUDE CODE

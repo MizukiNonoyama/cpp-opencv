@@ -1,3 +1,5 @@
+# START CLAUDE CODE
+
 from conan import ConanFile
 from conan.tools.cmake import CMakeDeps, CMakeToolchain
 
@@ -17,3 +19,5 @@ class ClionCmakeOpenCVSample(ConanFile):
     def generate(self):
         CMakeDeps(self).generate()
         CMakeToolchain(self).generate()
+
+# END CLAUDE CODE
